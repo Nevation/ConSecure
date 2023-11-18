@@ -49,7 +49,7 @@ func (w *EventWatcher) Start() {
 		nowFileData := w.getFileLines()
 		nowLineNumber := len(nowFileData)
 
-		if lastLineNumber != nowLineNumber {
+		if lastLineNumber < nowLineNumber {
 			newLines := nowFileData[lastLineNumber:]
 			for _, newLine := range newLines {
 				event, err := parser.ParseTraceLine(newLine)

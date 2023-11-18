@@ -22,9 +22,5 @@ func GetEventHandler() *EventHandler {
 }
 
 func (h *EventHandler) HandleEvent(event *constant.Event) {
-	go h.run(event)
-}
-
-func (h *EventHandler) run(event *constant.Event) {
-	h.detector.Detect(event)
+	go h.detector.Detect(event)
 }

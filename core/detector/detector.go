@@ -3,6 +3,7 @@ package detector
 import (
 	"consecure/constant"
 	"consecure/core/detector/engine"
+	"consecure/util/log"
 	"consecure/util/process"
 )
 
@@ -25,10 +26,8 @@ func (d *Detector) Detect(event *constant.Event) {
 				break
 			}
 
-			println("meta", meta)
-			process.StopProcess(event.Pid)
-
 			engineEvent := d.createEngineEvent(event, meta)
+			log.Debugln("Detect Event", engineEvent)
 
 			go d.runChecker(engineEvent)
 			break
@@ -44,8 +43,10 @@ func (d *Detector) createEngineEvent(event *constant.Event, meta *constant.Engin
 }
 
 func (d *Detector) runChecker(event *constant.EngineEvent) {
+	process.StopProcess(event.Event.Pid)
 	// TODO
-	println("run Checker", event, "image", event.EngineMeta.Args[0])
-	// process.KillProcess(event.Event.Pid)
-	process.ContinueProcess(event.Event.Pid)
+	log.Debugln("run Checker", event, "image", event.EngineMeta.Args[0])
+
+	process.KillProcess(event.Event.Pid)
+	// process.ContinueProcess(event.Event.Pid)
 }
