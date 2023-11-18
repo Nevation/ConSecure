@@ -34,22 +34,6 @@ func newLogger() *Logger {
 
 var l = newLogger()
 
-func Debug(v ...interface{}) {
-	l.debugLogger.Output(2, fmt.Sprintln(v...))
-}
-
-func Info(v ...interface{}) {
-	l.infoLogger.Output(2, fmt.Sprintln(v...))
-}
-
-func Warning(v ...interface{}) {
-	l.warningLogger.Output(2, fmt.Sprintln(v...))
-}
-
-func Error(v ...interface{}) {
-	l.errorLogger.Output(2, fmt.Sprintln(v...))
-}
-
 func logf(level LogLevel, format string, v ...interface{}) {
 	switch level {
 	case DebugLevel:
@@ -107,4 +91,9 @@ func Warningln(v ...interface{}) {
 
 func Errorln(v ...interface{}) {
 	runLog(ErrorLevel, v...)
+}
+
+func Fatal(v ...any) {
+	runLog(ErrorLevel, v...)
+	os.Exit(1)
 }
