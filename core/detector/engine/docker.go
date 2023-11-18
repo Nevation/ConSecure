@@ -45,5 +45,5 @@ func (e *DockerEngine) isTargetTypeImage(cmdLines []string) bool {
 		return true
 	}
 
-	return cmdLines[0] == "run"
+	return mainCmd == "run"
 }

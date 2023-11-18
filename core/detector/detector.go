@@ -2,6 +2,7 @@ package detector
 
 import (
 	"consecure/constant"
+	"consecure/core/checker"
 	"consecure/core/detector/engine"
 	"consecure/util/log"
 	"consecure/util/process"
@@ -9,11 +10,13 @@ import (
 
 type Detector struct {
 	engines []engine.EngineStrategy
+	checker *checker.Checker
 }
 
 func NewDetector() *Detector {
 	return &Detector{
 		engines: engine.GetEngineStrategies(),
+		checker: checker.NewChecker(),
 	}
 }
 
@@ -27,7 +30,7 @@ func (d *Detector) Detect(event *constant.Event) {
 			}
 
 			engineEvent := d.createEngineEvent(event, meta)
-			log.Debugln("Detect Event", engineEvent)
+			log.Debugln("Detected Event", engineEvent.EngineMeta.Command, engineEvent.EngineMeta.Args)
 
 			go d.runChecker(engineEvent)
 			break
@@ -44,9 +47,14 @@ func (d *Detector) createEngineEvent(event *constant.Event, meta *constant.Engin
 
 func (d *Detector) runChecker(event *constant.EngineEvent) {
 	process.StopProcess(event.Event.Pid)
-	// TODO
-	log.Debugln("run Checker", event, "image", event.EngineMeta.Args[0])
 
-	process.KillProcess(event.Event.Pid)
-	// process.ContinueProcess(event.Event.Pid)
+	log.Debugln(
+		"run Checker",
+		"pid", event.Event.Pid,
+		"target", event.EngineMeta.Target,
+		"command", event.EngineMeta.Command,
+		"args", event.EngineMeta.Args,
+	)
+
+	d.checker.Check(event)
 }
