@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 	"syscall"
 )
@@ -42,8 +43,41 @@ func GetProcessCmdline(pid int) ([]string, error) {
 	}
 
 	cmdline := strings.ReplaceAll(string(content), "\x00", " ")
-	println("cmdline", cmdline, "cmdlineFile", cmdlineFile)
 	args := strings.Split(cmdline, " ")
 
 	return args, nil
+}
+
+func GetParentPids(pid int) []int {
+	parents := []int{}
+
+	for {
+		statFile := fmt.Sprintf("/proc/%d/stat", pid)
+		content, err := ioutil.ReadFile(statFile)
+		if err != nil || len(content) == 0 {
+			break
+		}
+
+		stat := string(content)
+		ppid := strings.Split(stat, " ")[3]
+		parentPid, err := strconv.Atoi(ppid)
+
+		if parentPid == 0 || err != nil {
+			break
+		}
+
+		parents = append(parents, parentPid)
+		pid = parentPid
+	}
+
+	return parents
+}
+
+func GetParentPid(pid int) int {
+	parents := GetParentPids(pid)
+	if len(parents) == 0 {
+		return 0
+	}
+
+	return parents[0]
 }

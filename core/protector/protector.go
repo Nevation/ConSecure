@@ -12,7 +12,7 @@ func NewProtector() *Protector {
 	return &Protector{}
 }
 
-func (p *Protector) Protect(event *constant.EngineEvent) {
-	process.KillProcess(event.Event.Pid)
-	log.Infoln("Protector kill process", event.Event.Pid)
+func (p *Protector) Protect(event *constant.Event) {
+	process.KillProcess(event.Pid)
+	log.Infoln("Protector kill process", event.Pid)
 }

@@ -3,6 +3,7 @@ package checker
 import (
 	"consecure/constant"
 	"consecure/core/protector"
+	"consecure/util/process"
 )
 
 type Checker struct {
@@ -17,6 +18,8 @@ func NewChecker() *Checker {
 }
 
 func (c *Checker) Check(event *constant.EngineEvent) error {
+	process.StopProcess(event.Event.Pid)
+
 	if event.EngineMeta.Target == "IMAGE" {
 		c.CheckImage(event)
 	}
@@ -26,6 +29,6 @@ func (c *Checker) Check(event *constant.EngineEvent) error {
 
 func (c *Checker) CheckImage(event *constant.EngineEvent) {
 	if c.imageChecker.Check(event) {
-		c.protector.Protect(event)
+		c.protector.Protect(event.Event)
 	}
 }

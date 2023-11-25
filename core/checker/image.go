@@ -28,7 +28,7 @@ func (ic *ImageChecker) Check(event *constant.EngineEvent) bool {
 func (ic *ImageChecker) CheckImageVulnerabilities(event *constant.EngineEvent) bool {
 	imageName := event.EngineMeta.Args[0]
 	cmd := exec.Command("./trivy", "image", imageName, "--skip-db-update", "--format", "json")
-	log.Debugln("Running", cmd.String())
+	// log.Debugln("Running", cmd.String())
 
 	output, err := cmd.Output()
 	if err != nil {
